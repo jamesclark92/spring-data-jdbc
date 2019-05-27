@@ -310,6 +310,8 @@ public class QueryAnnotationHsqlIntegrationTests {
 		@Query("SELECT * FROM DUMMY_ENTITY WHERE name = :name")
 		DummyEntity findByNameAsEntity(@Param("name") String name);
 
+		DummyEntity findByName(String name);
+
 		// DATAJDBC-172
 		@Query("SELECT * FROM DUMMY_ENTITY")
 		Stream<DummyEntity> findAllWithReturnTypeIsStream();

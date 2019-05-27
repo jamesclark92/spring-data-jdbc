@@ -41,7 +41,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 /**
- * Unit tests for {@link JdbcRepositoryQuery}.
+ * Unit tests for {@link AbstractJdbcRepositoryQuery}.
  *
  * @author Jens Schauder
  * @author Oliver Gierke
@@ -49,7 +49,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
  * @author Evgeni Dimitrov
  * @author Mark Paluch
  */
-public class JdbcRepositoryQueryUnitTests {
+public class AbstractJdbcRepositoryQueryUnitTests {
 
 	JdbcQueryMethod queryMethod;
 
@@ -65,7 +65,7 @@ public class JdbcRepositoryQueryUnitTests {
 		this.queryMethod = mock(JdbcQueryMethod.class);
 
 		Parameters<?, ?> parameters = new DefaultParameters(
-				JdbcRepositoryQueryUnitTests.class.getDeclaredMethod("dummyMethod"));
+				AbstractJdbcRepositoryQueryUnitTests.class.getDeclaredMethod("dummyMethod"));
 		doReturn(parameters).when(queryMethod).getParameters();
 
 		this.defaultRowMapper = mock(RowMapper.class);
@@ -80,7 +80,7 @@ public class JdbcRepositoryQueryUnitTests {
 		doReturn(null).when(queryMethod).getAnnotatedQuery();
 
 		Assertions.assertThatExceptionOfType(IllegalStateException.class) //
-				.isThrownBy(() -> new JdbcRepositoryQuery(publisher, context, queryMethod, operations, defaultRowMapper)
+				.isThrownBy(() -> new DeclaredJdbcRepositoryQuery(publisher, context, queryMethod, operations, defaultRowMapper)
 						.execute(new Object[] {}));
 	}
 
@@ -89,7 +89,7 @@ public class JdbcRepositoryQueryUnitTests {
 
 		doReturn("some sql statement").when(queryMethod).getAnnotatedQuery();
 		doReturn(RowMapper.class).when(queryMethod).getRowMapperClass();
-		JdbcRepositoryQuery query = new JdbcRepositoryQuery(publisher, context, queryMethod, operations, defaultRowMapper);
+		AbstractJdbcRepositoryQuery query = new DeclaredJdbcRepositoryQuery(publisher, context, queryMethod, operations, defaultRowMapper);
 
 		query.execute(new Object[] {});
 
@@ -100,7 +100,7 @@ public class JdbcRepositoryQueryUnitTests {
 	public void defaultRowMapperIsUsedForNull() {
 
 		doReturn("some sql statement").when(queryMethod).getAnnotatedQuery();
-		JdbcRepositoryQuery query = new JdbcRepositoryQuery(publisher, context, queryMethod, operations, defaultRowMapper);
+		AbstractJdbcRepositoryQuery query = new DeclaredJdbcRepositoryQuery(publisher, context, queryMethod, operations, defaultRowMapper);
 
 		query.execute(new Object[] {});
 
@@ -113,7 +113,7 @@ public class JdbcRepositoryQueryUnitTests {
 		doReturn("some sql statement").when(queryMethod).getAnnotatedQuery();
 		doReturn(CustomRowMapper.class).when(queryMethod).getRowMapperClass();
 
-		new JdbcRepositoryQuery(publisher, context, queryMethod, operations, defaultRowMapper).execute(new Object[] {});
+		new DeclaredJdbcRepositoryQuery(publisher, context, queryMethod, operations, defaultRowMapper).execute(new Object[] {});
 
 		verify(operations) //
 				.queryForObject(anyString(), any(SqlParameterSource.class), isA(CustomRowMapper.class));
@@ -125,7 +125,7 @@ public class JdbcRepositoryQueryUnitTests {
 		doReturn("some sql statement").when(queryMethod).getAnnotatedQuery();
 		doReturn(CustomResultSetExtractor.class).when(queryMethod).getResultSetExtractorClass();
 
-		new JdbcRepositoryQuery(publisher, context, queryMethod, operations, defaultRowMapper).execute(new Object[] {});
+		new DeclaredJdbcRepositoryQuery(publisher, context, queryMethod, operations, defaultRowMapper).execute(new Object[] {});
 
 		ArgumentCaptor<CustomResultSetExtractor> captor = ArgumentCaptor.forClass(CustomResultSetExtractor.class);
 
@@ -143,7 +143,7 @@ public class JdbcRepositoryQueryUnitTests {
 		doReturn(CustomResultSetExtractor.class).when(queryMethod).getResultSetExtractorClass();
 		doReturn(CustomRowMapper.class).when(queryMethod).getRowMapperClass();
 
-		new JdbcRepositoryQuery(publisher, context, queryMethod, operations, defaultRowMapper).execute(new Object[] {});
+		new DeclaredJdbcRepositoryQuery(publisher, context, queryMethod, operations, defaultRowMapper).execute(new Object[] {});
 
 		ArgumentCaptor<CustomResultSetExtractor> captor = ArgumentCaptor.forClass(CustomResultSetExtractor.class);
 
@@ -165,7 +165,7 @@ public class JdbcRepositoryQueryUnitTests {
 		when(context.getRequiredPersistentEntity(DummyEntity.class).getIdentifierAccessor(any()).getIdentifier())
 				.thenReturn("some identifier");
 
-		new JdbcRepositoryQuery(publisher, context, queryMethod, operations, defaultRowMapper).execute(new Object[] {});
+		new DeclaredJdbcRepositoryQuery(publisher, context, queryMethod, operations, defaultRowMapper).execute(new Object[] {});
 
 		verify(publisher).publishEvent(any(AfterLoadEvent.class));
 	}
@@ -181,7 +181,7 @@ public class JdbcRepositoryQueryUnitTests {
 		when(context.getRequiredPersistentEntity(DummyEntity.class).getIdentifierAccessor(any()).getIdentifier())
 				.thenReturn("some identifier");
 
-		new JdbcRepositoryQuery(publisher, context, queryMethod, operations, defaultRowMapper).execute(new Object[] {});
+		new DeclaredJdbcRepositoryQuery(publisher, context, queryMethod, operations, defaultRowMapper).execute(new Object[] {});
 
 		verify(publisher, times(2)).publishEvent(any(AfterLoadEvent.class));
 	}

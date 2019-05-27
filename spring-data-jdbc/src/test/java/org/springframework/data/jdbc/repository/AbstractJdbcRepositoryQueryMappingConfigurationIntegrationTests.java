@@ -53,7 +53,7 @@ import lombok.Data;
  */
 @ContextConfiguration
 @Transactional
-public class JdbcRepositoryQueryMappingConfigurationIntegrationTests {
+public class AbstractJdbcRepositoryQueryMappingConfigurationIntegrationTests {
 
 	private static String CAR_MODEL = "ResultSetExtractor Car";
 
@@ -64,7 +64,7 @@ public class JdbcRepositoryQueryMappingConfigurationIntegrationTests {
 
 		@Bean
 		Class<?> testClass() {
-			return JdbcRepositoryQueryMappingConfigurationIntegrationTests.class;
+			return AbstractJdbcRepositoryQueryMappingConfigurationIntegrationTests.class;
 		}
 		
 		@Bean

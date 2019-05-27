@@ -136,15 +136,7 @@ public class JdbcRepositoryFactory extends RepositoryFactorySupport {
 	@Override
 	protected Optional<QueryLookupStrategy> getQueryLookupStrategy(@Nullable QueryLookupStrategy.Key key,
 			QueryMethodEvaluationContextProvider evaluationContextProvider) {
-
-		if (key == null || key == QueryLookupStrategy.Key.CREATE_IF_NOT_FOUND
-				|| key == QueryLookupStrategy.Key.USE_DECLARED_QUERY) {
-
-			JdbcQueryLookupStrategy strategy = new JdbcQueryLookupStrategy(publisher, context, converter,
-					queryMappingConfiguration, operations);
-			return Optional.of(strategy);
-		}
-
-		throw new IllegalArgumentException(String.format("Unsupported query lookup strategy %s!", key));
+		return Optional.of(JdbcQueryLookupStrategy.create(key, publisher, context, converter, accessStrategy,queryMappingConfiguration,
+				operations));
 	}
 }

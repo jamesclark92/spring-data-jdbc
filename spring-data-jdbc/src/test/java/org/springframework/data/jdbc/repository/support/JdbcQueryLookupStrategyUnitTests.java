@@ -85,11 +85,12 @@ public class JdbcQueryLookupStrategyUnitTests {
 
 	private RepositoryQuery getRepositoryQuery(String name, QueryMappingConfiguration mappingConfiguration) {
 
-		JdbcQueryLookupStrategy queryLookupStrategy = new JdbcQueryLookupStrategy(publisher, mappingContext, converter,
-				mappingConfiguration, operations);
-
-		Method method = ReflectionUtils.findMethod(MyRepository.class, name);
-		return queryLookupStrategy.resolveQuery(method, metadata, projectionFactory, namedQueries);
+//		JdbcQueryLookupStrategy queryLookupStrategy = new JdbcQueryLookupStrategy(publisher, mappingContext, converter,
+//				mappingConfiguration, operations);
+//
+//		Method method = ReflectionUtils.findMethod(MyRepository.class, name);
+//		return queryLookupStrategy.resolveQuery(method, metadata, projectionFactory, namedQueries);
+		return null;
 	}
 
 	interface MyRepository {
