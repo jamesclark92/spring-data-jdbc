@@ -252,6 +252,7 @@ public class QueryAnnotationHsqlIntegrationTests {
 
 		repository.insert("Spring Data JDBC");
 
+		DummyEntity spring_data_jdbc = repository.findByName("Spring Data JDBC");
 		assertThat(repository.findByNameAsEntity("Spring Data JDBC")).isNotNull();
 	}
 

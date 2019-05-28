@@ -46,7 +46,8 @@ abstract class AbstractJdbcRepositoryQuery implements RepositoryQuery {
     protected final RelationalMappingContext context;
     protected final JdbcQueryMethod queryMethod;
     protected final NamedParameterJdbcOperations operations;
-    protected final JdbcQueryExecutor executor;
+    protected final RowMapper<?> rowMapper;
+    protected final ResultSetExtractor extractor;
 
     /**
      * Creates a new {@link AbstractJdbcRepositoryQuery} for the given {@link JdbcQueryMethod}, {@link RelationalMappingContext}
@@ -75,10 +76,12 @@ abstract class AbstractJdbcRepositoryQuery implements RepositoryQuery {
         this.queryMethod = queryMethod;
         this.operations = operations;
 
-        RowMapper rowMapper = determineRowMapper(defaultRowMapper);
-        ResultSetExtractor extractor = determineResultSetExtractor(rowMapper != defaultRowMapper ? rowMapper : null);
+        this.rowMapper = determineRowMapper(defaultRowMapper);
+        this.extractor = determineResultSetExtractor(rowMapper != defaultRowMapper ? rowMapper : null);
+    }
 
-        executor = JdbcQueryExecutor.create(queryMethod, getQuery(), operations, useNamedParameters(), isModifyingQuery(), extractor,
+    private JdbcQueryExecutor getExecutor() {
+        return JdbcQueryExecutor.create(queryMethod, getQuery(), operations, useNamedParameters(), isModifyingQuery(), extractor,
                 rowMapper, this::publishAfterLoad);
     }
 
@@ -88,7 +91,7 @@ abstract class AbstractJdbcRepositoryQuery implements RepositoryQuery {
      */
     @Override
     public Object execute(Object[] objects) {
-        return executor.doExecute(objects);
+        return getExecutor().doExecute(objects);
     }
 
     protected abstract String getQuery();

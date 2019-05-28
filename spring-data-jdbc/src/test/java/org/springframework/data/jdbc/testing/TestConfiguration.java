@@ -65,7 +65,8 @@ public class TestConfiguration {
 	JdbcRepositoryFactory jdbcRepositoryFactory(
 			@Qualifier("defaultDataAccessStrategy") DataAccessStrategy dataAccessStrategy, RelationalMappingContext context,
 			JdbcConverter converter) {
-		return new JdbcRepositoryFactory(dataAccessStrategy, context, converter, publisher, namedParameterJdbcTemplate());
+		return new JdbcRepositoryFactory(dataAccessStrategy, context, converter, publisher, namedParameterJdbcTemplate(),
+				new SqlGeneratorSource(context));
 	}
 
 	@Bean

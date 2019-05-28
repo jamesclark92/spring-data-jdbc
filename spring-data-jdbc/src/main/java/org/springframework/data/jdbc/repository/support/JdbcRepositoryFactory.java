@@ -21,6 +21,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.data.jdbc.core.convert.DataAccessStrategy;
 import org.springframework.data.jdbc.core.convert.JdbcConverter;
+import org.springframework.data.jdbc.core.convert.SqlGeneratorSource;
 import org.springframework.data.jdbc.repository.QueryMappingConfiguration;
 import org.springframework.data.jdbc.repository.RowMapperMap;
 import org.springframework.data.relational.core.mapping.RelationalMappingContext;
@@ -51,6 +52,7 @@ public class JdbcRepositoryFactory extends RepositoryFactorySupport {
 	private final ApplicationEventPublisher publisher;
 	private final DataAccessStrategy accessStrategy;
 	private final NamedParameterJdbcOperations operations;
+	private final SqlGeneratorSource sqlGeneratorSource;
 
 	private QueryMappingConfiguration queryMappingConfiguration = QueryMappingConfiguration.EMPTY;
 
@@ -65,18 +67,21 @@ public class JdbcRepositoryFactory extends RepositoryFactorySupport {
 	 * @param operations must not be {@literal null}.
 	 */
 	public JdbcRepositoryFactory(DataAccessStrategy dataAccessStrategy, RelationalMappingContext context,
-			JdbcConverter converter, ApplicationEventPublisher publisher, NamedParameterJdbcOperations operations) {
+								 JdbcConverter converter, ApplicationEventPublisher publisher, NamedParameterJdbcOperations operations,
+								 SqlGeneratorSource sqlGeneratorSource) {
 
 		Assert.notNull(dataAccessStrategy, "DataAccessStrategy must not be null!");
 		Assert.notNull(context, "RelationalMappingContext must not be null!");
 		Assert.notNull(converter, "RelationalConverter must not be null!");
 		Assert.notNull(publisher, "ApplicationEventPublisher must not be null!");
+		Assert.notNull(sqlGeneratorSource, "SqlGeneratorSource must not be null!");
 
 		this.publisher = publisher;
 		this.context = context;
 		this.converter = converter;
 		this.accessStrategy = dataAccessStrategy;
 		this.operations = operations;
+		this.sqlGeneratorSource = sqlGeneratorSource;
 	}
 
 	/**
@@ -136,7 +141,7 @@ public class JdbcRepositoryFactory extends RepositoryFactorySupport {
 	@Override
 	protected Optional<QueryLookupStrategy> getQueryLookupStrategy(@Nullable QueryLookupStrategy.Key key,
 			QueryMethodEvaluationContextProvider evaluationContextProvider) {
-		return Optional.of(JdbcQueryLookupStrategy.create(key, publisher, context, converter, accessStrategy,queryMappingConfiguration,
-				operations));
+		return Optional.of(JdbcQueryLookupStrategy.create(key, publisher, context, converter, accessStrategy, queryMappingConfiguration,
+				operations, sqlGeneratorSource));
 	}
 }

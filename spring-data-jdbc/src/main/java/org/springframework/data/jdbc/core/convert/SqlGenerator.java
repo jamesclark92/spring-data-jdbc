@@ -15,6 +15,7 @@
  */
 package org.springframework.data.jdbc.core.convert;
 
+import lombok.Builder;
 import lombok.Value;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.jdbc.repository.support.SimpleJdbcRepository;
 import org.springframework.data.mapping.PersistentPropertyPath;
 import org.springframework.data.mapping.PropertyHandler;
+import org.springframework.data.mapping.PropertyPath;
 import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.relational.core.mapping.PersistentPropertyPathExtension;
 import org.springframework.data.relational.core.mapping.RelationalMappingContext;
@@ -54,7 +56,7 @@ import org.springframework.util.Assert;
  * @author Oleksandr Kucher
  * @author Mark Paluch
  */
-class SqlGenerator {
+public class SqlGenerator {
 
 	private static final Pattern parameterPattern = Pattern.compile("\\W");
 
@@ -312,11 +314,11 @@ class SqlGenerator {
 		return render(selectBuilder().build());
 	}
 
-	private SelectBuilder.SelectWhere selectBuilder() {
+	public SelectBuilder.SelectWhere selectBuilder() {
 		return selectBuilder(Collections.emptyList());
 	}
 
-	private SelectBuilder.SelectWhere selectBuilder(Collection<String> keyColumns) {
+	public SelectBuilder.SelectWhere selectBuilder(Collection<String> keyColumns) {
 
 		Table table = getTable();
 
@@ -352,6 +354,13 @@ class SqlGenerator {
 		}
 
 		return (SelectBuilder.SelectWhere) baseSelect;
+	}
+
+	@Nullable
+	public Column getColumn(PropertyPath propertyPath) {
+		PersistentPropertyPath<RelationalPersistentProperty> path = mappingContext.getPersistentPropertyPath(propertyPath);
+		PersistentPropertyPathExtension extPath = new PersistentPropertyPathExtension(mappingContext, path);
+		return getColumn(extPath);
 	}
 
 	/**
@@ -528,19 +537,19 @@ class SqlGenerator {
 		return render(delete);
 	}
 
-	private String render(Select select) {
+	public String render(Select select) {
 		return SqlRenderer.create().render(select);
 	}
 
-	private String render(Insert insert) {
+	public String render(Insert insert) {
 		return SqlRenderer.create().render(insert);
 	}
 
-	private String render(Update update) {
+	public String render(Update update) {
 		return SqlRenderer.create().render(update);
 	}
 
-	private String render(Delete delete) {
+	public String render(Delete delete) {
 		return SqlRenderer.create().render(delete);
 	}
 

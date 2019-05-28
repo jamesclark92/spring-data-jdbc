@@ -23,6 +23,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jdbc.core.convert.DataAccessStrategy;
 import org.springframework.data.jdbc.core.convert.EntityRowMapper;
 import org.springframework.data.jdbc.core.convert.JdbcConverter;
+import org.springframework.data.jdbc.core.convert.SqlGeneratorSource;
 import org.springframework.data.jdbc.repository.QueryMappingConfiguration;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.relational.core.mapping.RelationalMappingContext;
@@ -138,25 +139,28 @@ public final class JdbcQueryLookupStrategy {
 
     private static class CreateQueryLookupStrategy extends AbstractQueryLookupStrategy {
 
+        private final SqlGeneratorSource sqlGeneratorSource;
+
         /**
          * {@link QueryLookupStrategy} to create a query from the method name.
-         *
-         * @param publisher                 must not be {@literal null}.
+         *  @param publisher                 must not be {@literal null}.
          * @param context                   must not be {@literal null}.
          * @param converter                 must not be {@literal null}.
          * @param accessStrategy            must not be {@literal null}.
          * @param queryMappingConfiguration must not be {@literal null}.
          * @param operations
+         * @param sqlGeneratorSource
          */
         public CreateQueryLookupStrategy(ApplicationEventPublisher publisher, RelationalMappingContext context, JdbcConverter converter,
                                          DataAccessStrategy accessStrategy, QueryMappingConfiguration queryMappingConfiguration,
-                                         NamedParameterJdbcOperations operations) {
+                                         NamedParameterJdbcOperations operations, SqlGeneratorSource sqlGeneratorSource) {
             super(publisher, context, converter, accessStrategy, queryMappingConfiguration, operations);
+            this.sqlGeneratorSource = sqlGeneratorSource;
         }
 
         @Override
         protected RepositoryQuery resolveQuery(JdbcQueryMethod jdbcQueryMethod, RowMapper<?> mapper) {
-            return new PartTreeJdbcRepositoryQuery(publisher, context, jdbcQueryMethod, operations, mapper);
+            return new PartTreeJdbcRepositoryQuery(publisher, context, jdbcQueryMethod, operations, mapper, sqlGeneratorSource);
         }
     }
 
@@ -230,12 +234,13 @@ public final class JdbcQueryLookupStrategy {
     }
 
     public static QueryLookupStrategy create(@Nullable QueryLookupStrategy.Key key, ApplicationEventPublisher publisher,
-                                              RelationalMappingContext context, JdbcConverter converter, DataAccessStrategy accessStrategy,
-                                              QueryMappingConfiguration queryMappingConfiguration,
-                                              NamedParameterJdbcOperations operations) {
+                                             RelationalMappingContext context, JdbcConverter converter, DataAccessStrategy accessStrategy,
+                                             QueryMappingConfiguration queryMappingConfiguration,
+                                             NamedParameterJdbcOperations operations, SqlGeneratorSource sqlGeneratorSource) {
 
         Lazy<CreateQueryLookupStrategy> createQueryLookupStrategyLazy = Lazy.of(() ->
-                new CreateQueryLookupStrategy(publisher, context, converter, accessStrategy, queryMappingConfiguration, operations));
+                new CreateQueryLookupStrategy(publisher, context, converter, accessStrategy, queryMappingConfiguration, operations,
+                        sqlGeneratorSource));
 
         Lazy<DeclaredQueryLookupStrategy> declaredQueryLookupStrategyLazy = Lazy.of(() ->
                 new DeclaredQueryLookupStrategy(publisher, context, converter, accessStrategy, queryMappingConfiguration, operations));

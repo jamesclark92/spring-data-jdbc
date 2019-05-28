@@ -87,7 +87,7 @@ public class SimpleJdbcRepositoryEventsUnitTests {
 		delegatingDataAccessStrategy.setDelegate(dataAccessStrategy);
 
 		JdbcRepositoryFactory factory = new JdbcRepositoryFactory(dataAccessStrategy, context, converter, publisher,
-				operations);
+				operations, generatorSource);
 
 		this.repository = factory.getRepository(DummyEntityRepository.class);
 	}

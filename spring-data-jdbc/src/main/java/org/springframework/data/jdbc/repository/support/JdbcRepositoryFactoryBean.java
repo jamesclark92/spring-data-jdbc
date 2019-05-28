@@ -54,6 +54,7 @@ public class JdbcRepositoryFactoryBean<T extends Repository<S, ID>, S, ID extend
 	private DataAccessStrategy dataAccessStrategy;
 	private QueryMappingConfiguration queryMappingConfiguration = QueryMappingConfiguration.EMPTY;
 	private NamedParameterJdbcOperations operations;
+	private SqlGeneratorSource sqlGeneratorSource;
 
 	/**
 	 * Creates a new {@link JdbcRepositoryFactoryBean} for the given repository interface.
@@ -83,7 +84,7 @@ public class JdbcRepositoryFactoryBean<T extends Repository<S, ID>, S, ID extend
 	protected RepositoryFactorySupport doCreateRepositoryFactory() {
 
 		JdbcRepositoryFactory jdbcRepositoryFactory = new JdbcRepositoryFactory(dataAccessStrategy, mappingContext,
-				converter, publisher, operations);
+				converter, publisher, operations, sqlGeneratorSource);
 		jdbcRepositoryFactory.setQueryMappingConfiguration(queryMappingConfiguration);
 
 		return jdbcRepositoryFactory;
@@ -154,14 +155,14 @@ public class JdbcRepositoryFactoryBean<T extends Repository<S, ID>, S, ID extend
 			this.operations = beanFactory.getBean(NamedParameterJdbcOperations.class);
 		}
 
+		if (this.sqlGeneratorSource == null) {
+			this.sqlGeneratorSource = new SqlGeneratorSource(this.mappingContext);
+		}
+
 		if (this.dataAccessStrategy == null) {
 			this.dataAccessStrategy = this.beanFactory.getBeanProvider(DataAccessStrategy.class) //
-					.getIfAvailable(() -> {
-
-						SqlGeneratorSource sqlGeneratorSource = new SqlGeneratorSource(this.mappingContext);
-						return new DefaultDataAccessStrategy(sqlGeneratorSource, this.mappingContext, this.converter,
-								this.operations);
-					});
+					.getIfAvailable(() -> new DefaultDataAccessStrategy(this.sqlGeneratorSource, this.mappingContext, this.converter,
+							this.operations));
 		}
 
 		if (this.queryMappingConfiguration == null) {

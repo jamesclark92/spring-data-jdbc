@@ -34,7 +34,7 @@ public class SqlGeneratorSource {
 	private final Map<Class, SqlGenerator> sqlGeneratorCache = new ConcurrentHashMap<>();
 	private final RelationalMappingContext context;
 
-	SqlGenerator getSqlGenerator(Class<?> domainType) {
+	public SqlGenerator getSqlGenerator(Class<?> domainType) {
 
 		return sqlGeneratorCache.computeIfAbsent(domainType,
 				t -> new SqlGenerator(context, context.getRequiredPersistentEntity(t)));
