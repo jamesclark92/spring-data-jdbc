@@ -93,12 +93,13 @@ public class JdbcQueryCreator extends AbstractQueryCreator<String, Condition> {
             case LIKE:
                 return column.like(bindMarker());
             case NOT_LIKE:
-                return column.like(bindMarker()).not();
-            case TRUE:
-            case FALSE:
+                return column.notLike(bindMarker());
+//            case TRUE:
+//            case FALSE:
             case SIMPLE_PROPERTY:
                 return column.isEqualTo(bindMarker());
             case NEGATING_SIMPLE_PROPERTY:
+                return column.isNotEqualTo(bindMarker());
             case IS_EMPTY:
             case IS_NOT_EMPTY:
 
@@ -113,7 +114,6 @@ public class JdbcQueryCreator extends AbstractQueryCreator<String, Condition> {
 //                break;
 //            case TRUE:
 //                break;
-
 
             default:
                 throw new IllegalArgumentException("Unsupported keyword " + type);

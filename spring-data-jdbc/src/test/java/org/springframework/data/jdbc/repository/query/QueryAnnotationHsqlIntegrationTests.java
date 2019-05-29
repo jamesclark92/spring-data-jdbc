@@ -253,6 +253,12 @@ public class QueryAnnotationHsqlIntegrationTests {
 		repository.insert("Spring Data JDBC");
 
 		DummyEntity spring_data_jdbc = repository.findByName("Spring Data JDBC");
+
+		repository.save(dummyEntity("aaa"));
+		repository.save(dummyEntity("bbb"));
+		repository.save(dummyEntity("ccc"));
+
+		List<DummyEntity> a = repository.findDummyEntitiesByNameIsBetween("bbb", "ccc");
 		assertThat(repository.findByNameAsEntity("Spring Data JDBC")).isNotNull();
 	}
 
@@ -312,6 +318,8 @@ public class QueryAnnotationHsqlIntegrationTests {
 		DummyEntity findByNameAsEntity(@Param("name") String name);
 
 		DummyEntity findByName(String name);
+
+		List<DummyEntity> findDummyEntitiesByNameIsBetween(String start, String end);
 
 		// DATAJDBC-172
 		@Query("SELECT * FROM DUMMY_ENTITY")
