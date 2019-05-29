@@ -132,6 +132,17 @@ public abstract class Conditions {
 		return Like.create(leftColumnOrExpression, rightColumnOrExpression);
 	}
 
+    /**
+     * Creates a {@code NOT LIKE} {@link Condition}.
+     *
+     * @param leftColumnOrExpression left side of the comparison.
+     * @param rightColumnOrExpression right side of the comparison.
+     * @return the {@link Condition} condition.
+     */
+    public static Condition notLike(Expression leftColumnOrExpression, Expression rightColumnOrExpression) {
+        return like(leftColumnOrExpression, rightColumnOrExpression).not();
+    }
+
 	/**
 	 * Creates a {@code IN} {@link Condition clause}.
 	 *

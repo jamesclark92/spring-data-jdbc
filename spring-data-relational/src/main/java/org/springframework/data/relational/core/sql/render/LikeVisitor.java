@@ -33,6 +33,7 @@ class LikeVisitor extends FilteredSubtreeVisitor {
 
 	private final RenderContext context;
 	private final RenderTarget target;
+	private final Like condition;
 	private final StringBuilder part = new StringBuilder();
 	private @Nullable PartRenderer current;
 
@@ -40,6 +41,7 @@ class LikeVisitor extends FilteredSubtreeVisitor {
 		super(it -> it == condition);
 		this.context = context;
 		this.target = target;
+		this.condition = condition;
 	}
 
 	/*
@@ -73,6 +75,9 @@ class LikeVisitor extends FilteredSubtreeVisitor {
 
 		if (current != null) {
 			if (part.length() != 0) {
+				if (condition.isNegated()) {
+					part.append(" NOT");
+				}
 				part.append(" LIKE ");
 			}
 

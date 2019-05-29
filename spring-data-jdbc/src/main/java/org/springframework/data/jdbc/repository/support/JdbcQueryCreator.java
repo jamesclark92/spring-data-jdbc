@@ -83,15 +83,17 @@ public class JdbcQueryCreator extends AbstractQueryCreator<String, Condition> {
             case IS_NOT_NULL:
                 return column.isNotNull();
             case NOT_IN:
-                return column.in(bindMarker()).not();
+                return column.notIn(bindMarker());
             case IN:
-                retur
-            case STARTING_WITH:
-            case ENDING_WITH:
-            case CONTAINING:
-            case NOT_CONTAINING:
+                return column.in(bindMarker());
+//            case STARTING_WITH:
+//            case ENDING_WITH:
+//            case CONTAINING:
+//            case NOT_CONTAINING:
             case LIKE:
+                return column.like(bindMarker());
             case NOT_LIKE:
+                return column.like(bindMarker()).not();
             case TRUE:
             case FALSE:
             case SIMPLE_PROPERTY:

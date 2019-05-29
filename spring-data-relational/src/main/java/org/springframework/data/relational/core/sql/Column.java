@@ -173,6 +173,16 @@ public class Column extends AbstractSegment implements Expression, Named {
 		return Conditions.like(this, expression);
 	}
 
+    /**
+     * Creates a {@code NOT LIKE} {@link Condition}.
+     *
+     * @param expression right side of the comparison.
+     * @return the {@link Condition} condition.
+     */
+    public Condition notLike(Expression expression) {
+        return Conditions.notLike(this, expression);
+    }
+
 	/**
 	 * Creates a new {@link In} {@link Condition} given right {@link Expression}s.
 	 *

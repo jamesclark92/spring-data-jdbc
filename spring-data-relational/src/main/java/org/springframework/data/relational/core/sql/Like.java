@@ -29,13 +29,17 @@ public class Like extends AbstractSegment implements Condition {
 
 	private final Expression left;
 	private final Expression right;
+	private final boolean negated;
 
-	private Like(Expression left, Expression right) {
+	private Like(Expression left, Expression right){
+		this(left, right, false);
+	}
 
+	private Like(Expression left, Expression right, boolean negated) {
 		super(left, right);
-
 		this.left = left;
 		this.right = right;
+		this.negated = negated;
 	}
 
 	/**
@@ -53,6 +57,11 @@ public class Like extends AbstractSegment implements Condition {
 		return new Like(leftColumnOrExpression, rightColumnOrExpression);
 	}
 
+	@Override
+	public Condition not() {
+		return new Like(left, right, !negated);
+	}
+
 	/**
 	 * @return the left {@link Expression}.
 	 */
@@ -67,8 +76,15 @@ public class Like extends AbstractSegment implements Condition {
 		return right;
 	}
 
+	/**
+	 * @return if the expression is negated.
+	 */
+	public boolean isNegated() {
+		return negated;
+	}
+
 	@Override
 	public String toString() {
-		return left.toString() + " LIKE " + right.toString();
+		return left.toString() + (negated ? " NOT LIKE " : " LIKE ") + right.toString();
 	}
 }
