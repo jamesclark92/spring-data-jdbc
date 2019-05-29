@@ -34,13 +34,18 @@ public class In extends AbstractSegment implements Condition {
 
 	private final Expression left;
 	private final Collection<Expression> expressions;
+	private final boolean negated;
 
 	private In(Expression left, Collection<Expression> expressions) {
+		this(left, expressions, false);
+	}
 
+	private In(Expression left, Collection<Expression> expressions, boolean negated) {
 		super(toArray(left, expressions));
 
 		this.left = left;
 		this.expressions = expressions;
+		this.negated = negated;
 	}
 
 	private static Segment[] toArray(Expression expression, Collection<Expression> expressions) {
@@ -100,6 +105,23 @@ public class In extends AbstractSegment implements Condition {
 		Assert.notNull(expressions, "Expression argument must not be null");
 
 		return new In(columnOrExpression, Arrays.asList(expressions));
+	}
+
+	@Override
+	public Condition not() {
+		return new In(left, expressions, !negated);
+	}
+
+	public Expression getLeft() {
+		return left;
+	}
+
+	public Collection<Expression> getExpressions() {
+		return expressions;
+	}
+
+	public boolean isNegated() {
+		return negated;
 	}
 
 	/*

@@ -28,12 +28,14 @@ import org.springframework.data.relational.core.sql.Visitable;
 class InVisitor extends TypedSingleConditionRenderSupport<In> {
 
 	private final RenderTarget target;
+	private final In condition;
 	private final StringBuilder part = new StringBuilder();
 	private boolean needsComma = false;
 
-	InVisitor(RenderContext context, RenderTarget target) {
+	InVisitor(RenderContext context, RenderTarget target, In condition) {
 		super(context);
 		this.target = target;
+		this.condition = condition;
 	}
 
 	/*
@@ -52,6 +54,9 @@ class InVisitor extends TypedSingleConditionRenderSupport<In> {
 
 			if (part.length() == 0) {
 				part.append(renderedPart);
+				if (condition.isNegated()) {
+					part.append(" NOT");
+				}
 				part.append(" IN (");
 			} else {
 				part.append(renderedPart);

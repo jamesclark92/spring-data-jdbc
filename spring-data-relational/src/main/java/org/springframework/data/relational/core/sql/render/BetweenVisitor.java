@@ -72,12 +72,12 @@ class BetweenVisitor extends FilteredSubtreeVisitor {
 		if (current != null) {
 			if (part.length() != 0) {
 				if (usedBetweenKeyword) {
-					part.append(' ').append("AND").append(' ');
+					part.append(" AND ");
 				} else {
 					if (condition.isNegated()) {
-						part.append(' ').append("NOT");
+						part.append(" NOT");
 					}
-					part.append(' ').append("BETWEEN").append(' ');
+					part.append(" BETWEEN ");
 					usedBetweenKeyword = true;
 				}
 			}

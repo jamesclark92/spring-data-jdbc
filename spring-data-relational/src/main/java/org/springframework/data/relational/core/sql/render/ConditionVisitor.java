@@ -77,7 +77,7 @@ class ConditionVisitor extends TypedSubtreeVisitor<Condition> implements PartRen
 		}
 
 		if (segment instanceof In) {
-			return new InVisitor(context, builder::append);
+			return new InVisitor(context, builder::append, (In) segment);
 		}
 
 		if (segment instanceof Between) {

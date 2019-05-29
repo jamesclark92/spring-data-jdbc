@@ -4,6 +4,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jdbc.core.convert.SqlGenerator;
 import org.springframework.data.jdbc.core.convert.SqlGeneratorSource;
 import org.springframework.data.mapping.PropertyPath;
+import org.springframework.data.relational.core.sql.Column;
 import org.springframework.data.relational.core.sql.Condition;
 import org.springframework.data.relational.core.sql.Conditions;
 import org.springframework.data.relational.core.sql.SQL;
@@ -14,6 +15,7 @@ import org.springframework.data.repository.query.parser.PartTree;
 
 import java.util.Iterator;
 
+import static org.springframework.data.relational.core.sql.SQL.*;
 import static org.springframework.data.repository.query.parser.Part.Type;
 
 
@@ -57,23 +59,33 @@ public class JdbcQueryCreator extends AbstractQueryCreator<String, Condition> {
 
         final PropertyPath property = part.getProperty();
         final Type type = part.getType();
-
+        final Column column = sqlGenerator.getColumn(property);
+        if (column == null) {
+            throw new IllegalArgumentException("Unknown property");
+        }
 
         switch (type) {
 
             case BETWEEN:
-//                Conditions.
+                return column.between(bindMarker(), bindMarker());
             case AFTER:
             case GREATER_THAN:
-//                return Conditions.isGreater(new Expressions.SimpleExpression())
+                return column.isGreater(bindMarker());
             case GREATER_THAN_EQUAL:
+                return column.isGreaterOrEqualTo(bindMarker());
             case BEFORE:
             case LESS_THAN:
+                return column.isLess(bindMarker());
             case LESS_THAN_EQUAL:
+                return column.isLessOrEqualTo(bindMarker());
             case IS_NULL:
+                return column.isNull();
             case IS_NOT_NULL:
+                return column.isNotNull();
             case NOT_IN:
+                return column.in(bindMarker()).not();
             case IN:
+                retur
             case STARTING_WITH:
             case ENDING_WITH:
             case CONTAINING:
@@ -83,7 +95,7 @@ public class JdbcQueryCreator extends AbstractQueryCreator<String, Condition> {
             case TRUE:
             case FALSE:
             case SIMPLE_PROPERTY:
-                return Conditions.isEqual(sqlGenerator.getColumn(property), SQL.bindMarker());
+                return column.isEqualTo(bindMarker());
             case NEGATING_SIMPLE_PROPERTY:
             case IS_EMPTY:
             case IS_NOT_EMPTY:

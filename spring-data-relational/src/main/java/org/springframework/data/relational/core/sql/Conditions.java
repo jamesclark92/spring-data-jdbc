@@ -192,6 +192,36 @@ public abstract class Conditions {
 		return in(column, new SubselectExpression(subselect));
 	}
 
+    /**
+     * Creates a new {@code NOT IN} {@link Condition} given left and right {@link Expression}s.
+     *
+     * @param columnOrExpression left hand side of the {@link Condition} must not be {@literal null}.
+     * @param expressions right hand side (collection {@link Expression}) must not be {@literal null}.
+     * @return the {@code NOT IN} {@link Condition}.
+     */
+    public static Condition notIn(Expression columnOrExpression, Expression... expressions) {
+
+        Assert.notNull(columnOrExpression, "Comparison column or expression must not be null");
+        Assert.notNull(expressions, "Expression argument must not be null");
+
+        return In.create(columnOrExpression, Arrays.asList(expressions)).not();
+    }
+
+    /**
+     * Creates a {@code IN} {@link Condition clause} for a {@link Select subselect}.
+     *
+     * @param column the column to compare.
+     * @param subselect the subselect.
+     * @return the {@link In} condition.
+     */
+    public static Condition notIn(Column column, Select subselect) {
+
+        Assert.notNull(column, "Column must not be null");
+        Assert.notNull(subselect, "Subselect must not be null");
+
+        return in(column, new SubselectExpression(subselect)).not();
+    }
+
 	/**
 	 * Creates a {@code BETWEEN} {@link Condition clause} for an expression and two others..
 	 *
