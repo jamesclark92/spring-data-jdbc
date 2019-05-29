@@ -30,7 +30,7 @@ import org.springframework.util.Assert;
 public class Column extends AbstractSegment implements Expression, Named {
 
 	private final String name;
-	private final Table table;
+	private final Table  table;
 
 	Column(String name, Table table) {
 
@@ -209,6 +209,29 @@ public class Column extends AbstractSegment implements Expression, Named {
 	 */
 	public Condition isNotNull() {
 		return isNull().not();
+	}
+
+
+	/**
+	 * Creates a {@code BETWEEN} {@link Condition}.
+	 *
+	 * @param left left side of the comparison (inclusive).
+	 * @param right right side of the comparison (inclusive).
+	 * @return the {@link Between} condition.
+	 */
+	public Between between(Expression left, Expression right) {
+		return Conditions.between(this, left, right);
+	}
+
+	/**
+	 * Creates a {@code NOT BETWEEN} {@link Condition}.
+	 *
+	 * @param left left side of the comparison (inclusive).
+	 * @param right right side of the comparison (inclusive).
+	 * @return the {@link Condition} condition.
+	 */
+	public Condition notBetween(Expression left, Expression right) {
+		return Conditions.notBetween(this, left, right);
 	}
 
 	// -------------------------------------------------------------------------

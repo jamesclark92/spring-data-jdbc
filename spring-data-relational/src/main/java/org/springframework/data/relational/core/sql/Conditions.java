@@ -192,6 +192,39 @@ public abstract class Conditions {
 		return in(column, new SubselectExpression(subselect));
 	}
 
+	/**
+	 * Creates a {@code BETWEEN} {@link Condition clause} for an expression and two others..
+	 *
+	 * @param columnOrExpression the column or expression to compare.
+	 * @param leftExpression the being part of the between expression (inclusive).
+	 * @param rightExpression the end part of the between expression (inclusive).
+	 * @return the {@link Between} condition.
+	 */
+	public static Between between(Expression columnOrExpression, Expression leftExpression, Expression rightExpression) {
+
+		Assert.notNull(columnOrExpression, "columnOrExpression must not be null");
+		Assert.notNull(leftExpression, "leftExpression must not be null");
+		Assert.notNull(rightExpression, "rightExpression must not be null");
+
+		return Between.create(columnOrExpression, leftExpression, rightExpression);
+	}
+
+	/**
+	 * Creates a {@code NOT BETWEEN} {@link Condition clause} for an expression and two others..
+	 *
+	 * @param columnOrExpression the column or expression to compare.
+	 * @param leftExpression the being part of the between expression (inclusive).
+	 * @param rightExpression the end part of the between expression (inclusive).
+	 * @return the {@link Condition}.
+	 */
+	public static Condition notBetween(Expression columnOrExpression, Expression leftExpression, Expression rightExpression) {
+		Assert.notNull(columnOrExpression, "columnOrExpression must not be null");
+		Assert.notNull(leftExpression, "leftExpression must not be null");
+		Assert.notNull(rightExpression, "rightExpression must not be null");
+
+		return Between.create(columnOrExpression, leftExpression, rightExpression).not();
+	}
+
 	static class ConstantCondition extends AbstractSegment implements Condition {
 
 		private final String condition;
